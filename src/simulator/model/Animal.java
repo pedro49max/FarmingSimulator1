@@ -59,4 +59,18 @@ public abstract class Animal implements Entity, Animalnfo{
 		dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
 		
 	}
+	Animal deliver_baby() {
+		Animal babyx = new Animal(this.baby.get_genetic_code(), this.baby.get_diet(), this.baby.get_sight_range(), this.baby.get_speed(), mate_strategy, this.baby.get_position());
+		this.baby = null;
+		return babyx;
+	}
+	protected void move(double speed) {
+		this.pos = this.pos.plus(this.dest.minus(this.pos).direction().scale(speed));
+	}
+	public JSONObject as_JSON() {
+		/*"pos": [28.90696391797469,22.009772194487613],
+"gcode": "Sheep",
+"diet": "HERBIVORE",
+state": "NORMAL": "NORMAL*/
+	}
 }
