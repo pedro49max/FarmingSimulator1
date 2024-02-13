@@ -111,6 +111,15 @@ public class Vector2D {
 		assert (y >= min && y <= max);
 		return new Vector2D(x, y);
 	}
+	public static Vector2D get_random_vectorXY(double minX, double maxX, double minY, double maxY) {
+		assert (maxX >= minX);
+		assert (maxY >= minY);
+		double x = minX + Utils._rand.nextDouble(maxX - minX);
+		double y = minY + Utils._rand.nextDouble(maxY - minY);
+		assert (x >= minX && x <= maxX);
+		assert (y >= minY && y <= maxY);
+		return new Vector2D(x, y);
+	}
 
 	public JSONArray asJSONArray() {
 		JSONArray a = new JSONArray();
