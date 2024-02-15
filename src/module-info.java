@@ -6,4 +6,5 @@
  *
  */
 module Assingment1 {
+	requires json;
 }

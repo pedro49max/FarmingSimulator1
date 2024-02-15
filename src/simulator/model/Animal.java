@@ -1,5 +1,7 @@
 package simulator.model;
 
+import org.json.JSONObject;
+
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
@@ -53,10 +55,10 @@ public abstract class Animal implements Entity, Animalnfo{
 	void init(AnimalMapView reg_mngr) {
 		this.region_mngr = reg_mngr;
 		if(pos == null)
-			pos = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
+			pos = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
 		else {}
 			//Adjusting pos
-		dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
+		dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
 		
 	}
 	Animal deliver_baby() {
