@@ -43,7 +43,7 @@ public abstract class Animal implements Entity, Animalnfo{
 		this.sight_range = Utils.get_randomized_parameter((p1.get_sight_range()+p2.get_sight_range())/2, 0.2);
 		this.speed = Utils.get_randomized_parameter((p1.get_speed()+p2.get_speed())/2, 0.2);
 		this.mate_strategy = p2.mate_strategy;
-		this.pos = p1.get_position().plus(Vector2D.get_random_vector(-1,1).scale(60.0*(Utils._rand.nextGaussian()+1)))));
+		this.pos = p1.get_position().plus(Vector2D.get_random_vector(-1,1).scale(60.0*(Utils._rand.nextGaussian()+1)));
 		this.state = State.NORMAL;
 		this.energy = (p1.get_energy() + p2.get_energy())/2;
 		this.desire = 0.0;

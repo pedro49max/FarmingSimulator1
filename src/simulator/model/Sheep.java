@@ -1,5 +1,7 @@
 package simulator.model;
 
+import java.util.List;
+
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
@@ -21,7 +23,7 @@ public class Sheep extends Animal{
 			return;
 		else if(this.state == State.NORMAL) {
 			if(this.pos.dot(dest) < 8)
-				this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
+				this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
 			this.move(speed*dt*Math.exp((energy - 100.0)*0.007));
 			this.age += dt;
 			this.energy -= 20*dt;
@@ -35,7 +37,7 @@ public class Sheep extends Animal{
 			else if(desire > 100)
 				desire = 100;
 			if(danger_source == null) {
-				//find dangerous animal page7
+				List<Animal> animals = this.region_mngr.get_animals_in_range(this, this.genetic_code);
 				danger_source= wolf;
 			}
 			if(danger_source != null) {
@@ -106,7 +108,7 @@ public class Sheep extends Animal{
 			}
 			else {
 				if(this.pos.dot(dest) < 8)
-					this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
+					this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
 				this.move(speed*dt*Math.exp((energy - 100.0)*0.007));
 				this.age += dt;
 				this.energy -= 20*dt;
@@ -134,7 +136,7 @@ public class Sheep extends Animal{
 			this.state = State.NORMAL;
 		}
 		if(this.pos.getY() >= region_mngr.get_width()) {
-			this.pos = new Vector2D(this.pos.getX(), region_mngr.height() - 1);
+			this.pos = new Vector2D(this.pos.getX(), region_mngr.get_height() - 1);
 			this.state = State.NORMAL;
 		}
 		if(this.energy == 0.0 || this.age > 8.0)
