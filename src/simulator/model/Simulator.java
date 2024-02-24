@@ -3,6 +3,8 @@ package simulator.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import simulator.factories.Factory;
+
 public class Simulator implements JSONable{
 	private Factory<Animal> animals_factory;
 	private Factory<Region> regions_factory;

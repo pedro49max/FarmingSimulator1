@@ -128,7 +128,7 @@ public class RegionManager implements AnimalMapView{
 				List<Animal> regAnimals = regions[r][c].getAnimals();
 				for(int i = 0; i < regAnimals.size();i++) {
 					Animal regAnimal = animals.get(i);
-					if(a.pos.distanceTo(regAnimal.pos) <= a.get_sight_range())
+					if(a.pos.distanceTo(regAnimal.pos) <= a.get_sight_range() && filter.test(a))
 						animals.add(regAnimal);
 				}
 			}

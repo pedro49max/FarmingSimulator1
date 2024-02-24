@@ -1,6 +1,7 @@
 package simulator.model;
 
 import simulator.misc.Utils;
+import org.json.JSONObject;
 
 public class DynamicSupplyRegion extends Region{
 	private double food;

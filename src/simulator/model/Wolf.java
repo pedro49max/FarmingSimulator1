@@ -1,5 +1,8 @@
 package simulator.model;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
@@ -21,7 +24,7 @@ public class Wolf extends Animal{
 			return;
 		else if(this.state == State.NORMAL) {
 			if(this.pos.dot(dest) < 8)
-				this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
+				this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
 			this.move(speed*dt*Math.exp((energy - 100.0)*0.007));
 			this.age += dt;
 			this.energy -= 18*dt;
@@ -41,12 +44,13 @@ public class Wolf extends Animal{
 		}
 		else if(this.state == State.HUNGER) {
 			if(hunt_target.get_state() == State.DEAD || this.pos.distanceTo(hunt_target.get_position()) > this.sight_range) {
-				//Find a sheep  page 19
-				hunt_target = sheep;
+				Predicate<Animal> filter = animal -> animal instanceof Sheep;
+				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
+				this.hunt_target = this.hunting_strategy.select(this, animals);
 			}
 			if(hunt_target == null) {
 				if(this.pos.dot(dest) < 8)
-					this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
+					this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
 				this.move(speed*dt*Math.exp((energy - 100.0)*0.007));
 				this.age += dt;
 				this.energy -= 18*dt;
@@ -95,8 +99,9 @@ public class Wolf extends Animal{
 			if(mate_target != null && mate_target.get_state() == State.DEAD)
 				mate_target = null;
 			if(mate_target == null) {
-				//find one mate target alive with while page9
-				mate_target = wolf;
+				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
+				this.mate_target = this.mate_strategy.select(this, animals);
 			}
 			if(mate_target != null) {
 				this.dest = mate_target.get_position();
@@ -123,7 +128,7 @@ public class Wolf extends Animal{
 			}
 			else {
 				if(this.pos.dot(dest) < 8)
-					this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.height()-1);
+					this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
 				this.move(speed*dt*Math.exp((energy - 100.0)*0.007));
 				this.age += dt;
 				this.energy -= 18*dt;
@@ -147,7 +152,7 @@ public class Wolf extends Animal{
 			this.state = State.NORMAL;
 		}
 		if(this.pos.getY() >= region_mngr.get_width()) {
-			this.pos = new Vector2D(this.pos.getX(), region_mngr.height() - 1);
+			this.pos = new Vector2D(this.pos.getX(), region_mngr.get_height() - 1);
 			this.state = State.NORMAL;
 		}
 		if(this.energy == 0.0 || this.age > 14.0)

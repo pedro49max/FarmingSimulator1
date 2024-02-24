@@ -1,6 +1,7 @@
 package simulator.model;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
@@ -37,8 +38,9 @@ public class Sheep extends Animal{
 			else if(desire > 100)
 				desire = 100;
 			if(danger_source == null) {
-				List<Animal> animals = this.region_mngr.get_animals_in_range(this, this.genetic_code);
-				danger_source= wolf;
+				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
+				this.danger_source = this.danger_strategy.select(this, animals);
 			}
 			if(danger_source != null) {
 				this.state = State.DANGER;
@@ -66,8 +68,9 @@ public class Sheep extends Animal{
 					desire = 100;
 			}
 			if(danger_source == null || pos.distanceTo(danger_source.get_position()) > this.sight_range) {
-				//find dangerous animal page7
-				danger_source= wolf;
+				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
+				this.danger_source = this.danger_strategy.select(this, animals);
 				if(danger_source == null) {
 					if(this.desire < 65)
 						this.state = State.NORMAL;
@@ -80,8 +83,9 @@ public class Sheep extends Animal{
 			if(mate_target != null && mate_target.get_state() == State.DEAD)
 				mate_target = null;
 			if(mate_target == null) {
-				//find one mate target alive with while page7
-				mate_target = sheep;
+				Predicate<Animal> filter = animal -> animal instanceof Sheep;
+				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
+				this.mate_target = this.mate_strategy.select(this, animals);
 			}
 			if(mate_target != null) {
 				this.dest = mate_target.get_position();
@@ -123,8 +127,9 @@ public class Sheep extends Animal{
 					desire = 100;
 			}
 			if(danger_source == null) {
-				//find dangerous animal page7
-				danger_source= wolf;
+				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
+				this.danger_source = this.danger_strategy.select(this, animals);
 			}
 			if(danger_source != null)
 				this.state = State.DANGER;
