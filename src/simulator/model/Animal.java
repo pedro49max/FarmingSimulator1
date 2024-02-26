@@ -62,7 +62,11 @@ public abstract class Animal implements Entity, Animalnfo{
 		
 	}
 	Animal deliver_baby() {
-		Animal babyx = new Animal(this.baby.get_genetic_code(), this.baby.get_diet(), this.baby.get_sight_range(), this.baby.get_speed(), mate_strategy, this.baby.get_position());
+		Animal babyx;
+		if(this.diet == Diet.CARNIVORE)
+			babyx = new Wolf(this.baby.mate_strategy, this.baby.getSecondStrategy(), this.baby.get_position());
+		else
+			babyx = new Sheep(this.baby.mate_strategy, this.baby.getSecondStrategy(), this.baby.get_position());
 		this.baby = null;
 		return babyx;
 	}
@@ -70,9 +74,22 @@ public abstract class Animal implements Entity, Animalnfo{
 		this.pos = this.pos.plus(this.dest.minus(this.pos).direction().scale(speed));
 	}
 	public JSONObject as_JSON() {
-		/*"pos": [28.90696391797469,22.009772194487613],
-"gcode": "Sheep",
-"diet": "HERBIVORE",
-state": "NORMAL": "NORMAL*/
+		JSONObject json = new JSONObject();
+        
+        // Add position
+        json.put("pos", new double[]{this.pos.getX(), this.pos.getY()});
+        
+        // Add genetic code
+        json.put("gcode", this.genetic_code);
+        
+        // Add diet
+        String diet = this.diet == Diet.CARNIVORE ? "CARNIVORE" : "HERBIVORE";
+        json.put("diet", diet);
+        
+        // Add state
+        json.put("state", this.state.toString());
+        
+        return json;
 	}
+	abstract SelectionStrategy getSecondStrategy();
 }

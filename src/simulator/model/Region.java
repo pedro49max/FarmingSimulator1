@@ -2,6 +2,8 @@ package simulator.model;
 
 import java.util.List;
 import java.util.ArrayList;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 public abstract class Region implements Entity, FoodSupplier, RegionInfo{
 	protected List<Animal> animals;
@@ -29,6 +31,17 @@ public abstract class Region implements Entity, FoodSupplier, RegionInfo{
 		return animalss;
 	}
 	public JSONObject as_JSON() {//returns a JSON structure as follows where ai is what is returned by as_JSON() of the corresponding animal:
-		//"animals":[a1,a2,...],
+		JSONObject json = new JSONObject();
+        JSONArray animalArray = new JSONArray();
+
+        // Add animals to the JSON array
+        for (Animal animal : animals) {
+            animalArray.put(animal.as_JSON());
+        }
+
+        // Add the JSON array of animals to the JSON object
+        json.put("animals", animalArray);
+
+        return json;
 	}
 }

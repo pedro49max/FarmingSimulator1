@@ -208,4 +208,7 @@ public class Wolf extends Animal{
 			pregnant = false;
 		return pregnant;
 	}
+	public SelectionStrategy getSecondStrategy() {
+		return this.hunting_strategy;
+	}
 }

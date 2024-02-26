@@ -197,4 +197,7 @@ public class Sheep extends Animal{
 			pregnant = false;
 		return pregnant;
 	}
+	public SelectionStrategy getSecondStrategy() {
+		return this.danger_strategy;
+	}
 }

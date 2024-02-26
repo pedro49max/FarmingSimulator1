@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import simulator.misc.Vector2D;
 
@@ -135,16 +137,24 @@ public class RegionManager implements AnimalMapView{
 		return animals;
 	}
 	public JSONObject as_JSON() {
-		//{
-			//"regions":[o1,o2,...],
-		//	}
-		//	where oi is a JSON structure corresponding to a region and has the following form
-		//	{
-			//"row: i,
-		//	"col": j,
-		//	"data": r
-		//	}
-		//	where r is what is returned by the as_JSON() method of the region in row i and column j.
+		 JSONObject json = new JSONObject();
+	        JSONArray regionArray = new JSONArray();
+
+	        // Iterate through regions and add their JSON representations to the array
+	        for (int i = 0; i < this.rows; i++) {
+	            for (int j = 0; j < this.colums; j++) {
+	                JSONObject regionJSON = new JSONObject();
+	                regionJSON.put("row", i);
+	                regionJSON.put("col", j);
+	                regionJSON.put("data", this.regions[i][j].as_JSON());
+	                regionArray.put(regionJSON);
+	            }
+	        }
+
+	        // Add the array of region JSON objects to the main JSON object
+	        json.put("regions", regionArray);
+
+	        return json;
 	}
 	@Override
 	public int get_cols() {

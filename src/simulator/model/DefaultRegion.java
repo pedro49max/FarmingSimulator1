@@ -1,7 +1,5 @@
 package simulator.model;
 
-import org.json.JSONObject;
-
 public class DefaultRegion extends Region{
 	public double get_food(Animal a, double dt) {
 		double food = 0;
