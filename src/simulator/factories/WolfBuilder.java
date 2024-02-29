@@ -4,15 +4,16 @@ import org.json.JSONObject;
 
 import simulator.misc.Vector2D;
 import simulator.model.Animal;
-import simulator.model.SelectClosest;
 import simulator.model.SelectFirst;
-import simulator.model.SelectYoungest;
 import simulator.model.SelectionStrategy;
 import simulator.model.Sheep;
 
 public class WolfBuilder extends Builder<Animal> {
-	public WolfBuilder() {
+	private Factory<SelectionStrategy> strategyFactory;
+	
+	public WolfBuilder(Factory<SelectionStrategy> strategyFactory) {
         super("wolf", "Wolf Builder");
+        this.strategyFactory = strategyFactory;
     }
 
     @Override
@@ -35,17 +36,14 @@ public class WolfBuilder extends Builder<Animal> {
 
     // Helper method to parse a SelectionStrategy from JSON
     private SelectionStrategy parseStrategy(JSONObject strategyJson) {
-        if (strategyJson == null) {
+    	if (strategyJson == null) {
+            // Default to SelectFirstStrategy if no strategy is provided
             return new SelectFirst();
         } else {
-        		int x = strategyJson.getInt("random");
-        		if(x%3 == 0)
-        			return new SelectFirst();
-        		else if(x%3 == 1)
-        			return new SelectClosest();
-        		else
-        			return new SelectYoungest();
-            
+            // Create the strategy using the factory
+            String strategyType = strategyJson.getString("type");
+            JSONObject strategyData = strategyJson.getJSONObject("data");
+            return strategyFactory.create_instance(new JSONObject().put("type", strategyType).put("data", strategyData));
         }
     }
     private Vector2D parsePosition(JSONObject positionJson) {

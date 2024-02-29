@@ -35,6 +35,10 @@ public abstract class Animal implements Entity, Animalnfo{
 		this.mate_target = null;
 		this.baby = null;
 		this.region_mngr = null;
+		if(this.diet == Diet.CARNIVORE)
+			this.age = Utils._rand.nextDouble(13);//Random number when initialize the program
+		else
+			this.age = Utils._rand.nextDouble(7);//Random number when initialize the program
 	}
 	
 	protected Animal(Animal p1, Animal p2) {
@@ -51,6 +55,7 @@ public abstract class Animal implements Entity, Animalnfo{
 		this.mate_target = null;
 		this.baby = null;
 		this.region_mngr = null;
+		this.age = 0;
 	}
 	void init(AnimalMapView reg_mngr) {
 		this.region_mngr = reg_mngr;
