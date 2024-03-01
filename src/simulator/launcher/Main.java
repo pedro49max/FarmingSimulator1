@@ -1,9 +1,11 @@
 package simulator.launcher;
 
 import java.io.File;
+import java.util.*;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -12,14 +14,19 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import simulator.model.Animal;
+import simulator.model.Region;
 import simulator.model.Simulator;
 import simulator.misc.Utils;
 import simulator.control.Controller;
-import simulator.factories.SheepBuilder;
-import simulator.factories.WolfBuilder;
+import simulator.factories.Factory;
+import simulator.factories.Builder;
+import simulator.factories.BuilderBasedFactory;
+
 //papure
 public class Main {
 	private enum ExecMode {
@@ -54,6 +61,8 @@ public class Main {
 	private static String _out_file = null;
 	private static boolean _simple_view = false;
 	private static ExecMode _mode = ExecMode.BATCH;
+	private static Factory<Animal> animals_factory;
+	private static Factory<Region> regions_factory;
 
 	private static void parse_args(String[] args) {
 
@@ -166,7 +175,15 @@ public class Main {
 	}
 
 	private static void init_factories() {
-		
+		// Initialize the animal factory
+	    List<Builder<Animal>> animalBuilders = new ArrayList<>();
+	    // Add your animal builders here...
+	    animals_factory = new BuilderBasedFactory<>(animalBuilders);
+
+	    // Initialize the region factory
+	    List<Builder<Region>> regionBuilders = new ArrayList<>();
+	    // Add your region builders here...
+	    regions_factory = new BuilderBasedFactory<>(regionBuilders);
 	}
 
 	private static JSONObject load_JSON_file(InputStream in) {
@@ -174,21 +191,22 @@ public class Main {
 	}
 
 
-	private static void start_batch_mode() throws Exception {
+	private static void start_batch_mode() throws IOException {
 		try (InputStream is = new FileInputStream(new File(_in_file));
 	            OutputStream os = new FileOutputStream(new File(_out_file))) {
 	        // Load the input JSON file
-	        JSONObject inputJSON = loadJSONFile(is);
+	        JSONObject inputJSON = load_JSON_file(is);
 
 	        // Extract parameters from the input JSON
 	        int width = inputJSON.getInt("width");
 	        int height = inputJSON.getInt("height");
 	        int cols = inputJSON.getInt("cols");
 	        int rows = inputJSON.getInt("rows");
+
 	        JSONArray animalsArray = inputJSON.getJSONArray("animals");
 
 	        // Create the simulator instance
-	        Simulator simulator = new Simulator(cols, rows, width, height);
+	        Simulator simulator = new Simulator(cols, rows, width, height, animals_factory, regions_factory);
 
 	        // Create animals based on the specifications provided in the input file
 	        for (int i = 0; i < animalsArray.length(); i++) {
@@ -201,10 +219,10 @@ public class Main {
 	            for (int j = 0; j < amount; j++) {
 	                switch (animalType) {
 	                    case "sheep":
-	                        simulator.add_animal(new SheepBuilder().create_instance(animalData));
+	                        simulator.add_animal(animalData);
 	                        break;
 	                    case "wolf":
-	                        simulator.add_animal(new WolfBuilder().create_instance(animalData));
+	                        simulator.add_animal(animalData);
 	                        break;
 	                    default:
 	                        throw new IllegalArgumentException("Invalid animal type: " + animalType);
@@ -214,7 +232,12 @@ public class Main {
 
 	        // Create the controller instance and run the simulation
 	        Controller controller = new Controller(simulator);
-	        controller.run(_time, _deltaTime, _simpleViewer, os);
+	        controller.load_data(inputJSON);
+	        controller.run(_time, _deltaTime, _simple_view, os);
+	        os.close();
+	    }
+		catch (IOException e) {
+	        System.err.println("Error opening input file: " + e.getMessage());
 	    }
 	}
 
