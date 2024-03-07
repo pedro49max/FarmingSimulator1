@@ -52,6 +52,7 @@ public class Main {
 	// default values for some parameters
 	//
 	private final static Double _default_time = 10.0; // in seconds
+	private final static Double _default_deltaTime = 0.03; // in seconds
 
 	// some attributes to stores values corresponding to command-line parameters
 	//
@@ -75,11 +76,12 @@ public class Main {
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine line = parser.parse(cmdLineOptions, args);
+			//System.out.println(line.getOptionValue('i'));//debuggin
 			parse_help_option(line, cmdLineOptions);
 			parse_in_file_option(line);
 			parse_time_option(line);
-			parse_delta_time_option(line);
 			parse_output_option(line);
+			parse_delta_time_option(line);
 			parse_simple_viewer_option(line);
 			// if there are some remaining arguments, then something wrong is
 			// provided in the command line!
@@ -87,12 +89,15 @@ public class Main {
 			String[] remaining = line.getArgs();
 			if (remaining.length > 0) {
 				String error = "Illegal arguments:";
-				for (String o : remaining)
+				for (String o : remaining) {
+					System.out.println(o);
 					error += (" " + o);
+				}
 				throw new ParseException(error);
 			}
 
 		} catch (ParseException e) {
+			System.out.println("mainParse");
 			System.err.println(e.getLocalizedMessage());
 			System.exit(1);
 		}
@@ -102,7 +107,10 @@ public class Main {
 	private static Options build_options() {
 		Options cmdLineOptions = new Options();
 		// delta
-		cmdLineOptions.addOption(Option.builder("dt").longOpt("delta-time").desc("A double representing actual time, in seconds, per simulation step. Default value: 0.03.").build());
+		cmdLineOptions.addOption(Option.builder("dt").longOpt("deltaTime").hasArg()
+				.desc("A double representing actual time, in seconds, per simulation step. Default value: "
+						+ _default_deltaTime + ".")
+				.build());
 		
 		
 		// help
@@ -141,11 +149,13 @@ public class Main {
 		}
 	}
 	private static void parse_delta_time_option(CommandLine line) throws ParseException {
-		String t = line.getOptionValue("dt", _default_time.toString());
+		String t = line.getOptionValue("dt", _default_deltaTime.toString());
+		//System.out.println(t);
 		try {
 			_deltaTime = Double.parseDouble(t);
 			assert (_deltaTime>= 0);
 		} catch (Exception e) {
+			System.out.println(t);
 			throw new ParseException("Invalid value for time: " + t);
 		}
 	
