@@ -216,7 +216,8 @@ public class Main {
 		return new JSONObject(new JSONTokener(in));
 	}
 
-
+	public static int width;
+	public static int height;
 	private static void start_batch_mode() throws IOException {
 		try (InputStream is = new FileInputStream(new File(_in_file));
 	            OutputStream os = new FileOutputStream(new File(_out_file))) {
@@ -224,8 +225,8 @@ public class Main {
 	        JSONObject inputJSON = load_JSON_file(is);
 
 	        // Extract parameters from the input JSON
-	        int width = inputJSON.getInt("width");
-	        int height = inputJSON.getInt("height");
+	        width = inputJSON.getInt("width");
+	        height= inputJSON.getInt("height");
 	        int cols = inputJSON.getInt("cols");
 	        int rows = inputJSON.getInt("rows");
 
@@ -235,7 +236,7 @@ public class Main {
 	        Simulator simulator = new Simulator(cols, rows, width, height, animals_factory, regions_factory);
 
 	        // Create animals based on the specifications provided in the input file
-	        for (int i = 0; i < animalsArray.length(); i++) {
+	        for (int i = 0; i < animalsArray.length() -2 ; i++) {
 	            JSONObject animalSpec = animalsArray.getJSONObject(i);
 	            int amount = animalSpec.getInt("amount");
 	            JSONObject animalData = animalSpec.getJSONObject("spec");
@@ -254,6 +255,7 @@ public class Main {
 	                        throw new IllegalArgumentException("Invalid animal type: " + animalType);
 	                }
 	            }
+	            
 	        }
 
 	        // Create the controller instance and run the simulation

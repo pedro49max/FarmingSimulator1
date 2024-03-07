@@ -2,6 +2,7 @@ package simulator.model;
 
 import org.json.JSONObject;
 
+import simulator.launcher.Main;
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
@@ -48,6 +49,10 @@ public abstract class Animal implements Entity, Animalnfo{
 		this.speed = Utils.get_randomized_parameter((p1.get_speed()+p2.get_speed())/2, 0.2);
 		this.mate_strategy = p2.mate_strategy;
 		this.pos = p1.get_position().plus(Vector2D.get_random_vector(-1,1).scale(60.0*(Utils._rand.nextGaussian()+1)));
+		while(pos.getX() >= Main.width || pos.getY() >= Main.width) {
+			this.pos = p1.get_position().plus(Vector2D.get_random_vector(-1,1).scale(60.0*(Utils._rand.nextGaussian()+1)));
+			//System.out.println("baby animal out of the map");
+		}
 		this.state = State.NORMAL;
 		this.energy = (p1.get_energy() + p2.get_energy())/2;
 		this.desire = 0.0;
@@ -55,7 +60,7 @@ public abstract class Animal implements Entity, Animalnfo{
 		this.mate_target = null;
 		this.baby = null;
 		this.region_mngr = null;
-		this.age = 0;
+		this.age = 0.0;
 	}
 	void init(AnimalMapView reg_mngr) {
 		this.region_mngr = reg_mngr;

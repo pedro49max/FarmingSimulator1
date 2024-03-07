@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import simulator.model.SelectionStrategy;
 import simulator.model.Sheep;
+import simulator.launcher.Main;
 import simulator.misc.Vector2D;
 import simulator.model.Animal;
 import simulator.model.SelectFirst;
@@ -49,7 +50,7 @@ public class SheepBuilder extends Builder<Animal> {
     }
     private Vector2D parsePosition(JSONObject posObject) {
     	if(posObject == null) {
-    		Vector2D position = Vector2D.get_random_vectorXY(100, 200, 100, 200);
+    		Vector2D position = Vector2D.get_random_vectorXY(0, Main.width - 1, 0, Main.height - 1);
             return position;
     	}
     	JSONArray xRangeArray = posObject.optJSONArray("x_range");

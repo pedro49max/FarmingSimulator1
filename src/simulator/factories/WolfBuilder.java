@@ -3,11 +3,13 @@ package simulator.factories;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import simulator.launcher.Main;
 import simulator.misc.Vector2D;
 import simulator.model.Animal;
 import simulator.model.SelectFirst;
 import simulator.model.SelectionStrategy;
 import simulator.model.Sheep;
+import simulator.model.Wolf;
 
 public class WolfBuilder extends Builder<Animal> {
 	private Factory<SelectionStrategy> strategyFactory;
@@ -26,13 +28,13 @@ public class WolfBuilder extends Builder<Animal> {
         SelectionStrategy mateStrategy = parseStrategy(data.optJSONObject("mate_strategy"));
 
         // Parsing danger strategy
-        SelectionStrategy dangerStrategy = parseStrategy(data.optJSONObject("hunger_strategy"));
+        SelectionStrategy hunting_strategy = parseStrategy(data.optJSONObject("hunger_strategy"));
 
         // Parsing position
         JSONObject posObject = data.optJSONObject("pos");
 
         // Creating Sheep instance with provided attributes
-        return new Sheep( mateStrategy, dangerStrategy, this.parsePosition(posObject));
+        return new Wolf( mateStrategy, hunting_strategy, this.parsePosition(posObject));
     }
 
     // Helper method to parse a SelectionStrategy from JSON
@@ -49,7 +51,7 @@ public class WolfBuilder extends Builder<Animal> {
     }
     private Vector2D parsePosition(JSONObject posObject) {
     	if(posObject == null) {
-    		Vector2D position = Vector2D.get_random_vectorXY(100, 200, 100, 200);
+    		Vector2D position = Vector2D.get_random_vectorXY(0, Main.width - 1, 0, Main.height - 1);
             return position;
     	}
     	JSONArray xRangeArray = posObject.optJSONArray("x_range");

@@ -11,7 +11,7 @@ public class Wolf extends Animal{
 	private SelectionStrategy hunting_strategy;
 	
 	public Wolf(SelectionStrategy mate_strategy, SelectionStrategy hunting_strategy, Vector2D pos) {
-		super("Wolf", Diet.CARNIVORE, 50.0, 60.0, mate_strategy, pos);
+		super("wolf", Diet.CARNIVORE, 50.0, 60.0, mate_strategy, pos);
 		this.hunting_strategy = hunting_strategy;
 	}
 	protected Wolf(Wolf p1, Animal p2) {
@@ -37,14 +37,15 @@ public class Wolf extends Animal{
 				desire = 0;
 			else if(desire > 100)
 				desire = 100;
-			if(this.energy < 50)
+			if(this.energy < 50) {
 				this.state = State.HUNGER;
+			}
 			else if(this.desire > 65)
 				this.state= State.MATE;				
 		}
 		else if(this.state == State.HUNGER) {
-			if(hunt_target.get_state() == State.DEAD || this.pos.distanceTo(hunt_target.get_position()) > this.sight_range) {
-				Predicate<Animal> filter = animal -> animal instanceof Sheep;
+			if(hunt_target == null ||(hunt_target != null && (hunt_target.get_state() == State.DEAD || this.pos.distanceTo(hunt_target.get_position()) > this.sight_range))) {
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.HERBIVORE);
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.hunt_target = this.hunting_strategy.select(this, animals);
 			}
@@ -99,7 +100,7 @@ public class Wolf extends Animal{
 			if(mate_target != null && mate_target.get_state() == State.DEAD)
 				mate_target = null;
 			if(mate_target == null) {
-				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.mate_target = this.mate_strategy.select(this, animals);
 			}

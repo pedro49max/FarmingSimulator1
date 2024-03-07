@@ -11,7 +11,7 @@ public class Sheep extends Animal{
 	private SelectionStrategy danger_strategy;
 	
 	public Sheep(SelectionStrategy mate_strategy, SelectionStrategy danger_strategy, Vector2D pos) {
-		super("Sheep", Diet.HERBIVORE, 40.0, 35.0, mate_strategy, pos);
+		super("sheep", Diet.HERBIVORE, 40.0, 35.0, mate_strategy, pos);
 		this.danger_strategy = danger_strategy;
 	}
 	protected Sheep(Sheep p1, Animal p2) {
@@ -20,6 +20,7 @@ public class Sheep extends Animal{
 		this.danger_source = null;
 	}
 	public void update(double dt) {
+		//System.out.println(this.state.toString());//debbuging
 		if(this.state == State.DEAD)
 			return;
 		else if(this.state == State.NORMAL) {
@@ -37,15 +38,15 @@ public class Sheep extends Animal{
 				desire = 0;
 			else if(desire > 100)
 				desire = 100;
-			if(danger_source == null) {
-				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+			if(danger_source == null) {			
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);;
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.danger_source = this.danger_strategy.select(this, animals);
 			}
 			if(danger_source != null) {
 				this.state = State.DANGER;
 			}
-			else if(danger_source != null && this.desire > 65)
+			else if(danger_source == null&& this.desire > 65)
 				this.state = State.MATE;
 				
 		}
@@ -53,6 +54,22 @@ public class Sheep extends Animal{
 			if(danger_source != null && danger_source.get_state() == State.DEAD)
 				danger_source = null;
 			if(danger_source == null) {
+				if(this.pos.dot(dest) < 8)
+					this.dest = Vector2D.get_random_vectorXY(0, region_mngr.get_width()-1, 0, region_mngr.get_height()-1);
+				this.move(speed*dt*Math.exp((energy - 100.0)*0.007));
+				this.age += dt;
+				this.energy -= 20*dt;
+				if(energy < 0)
+					energy = 0;
+				else if(energy > 100)
+					energy = 100;
+				this.desire += 40*dt;
+				if(desire < 0)
+					desire = 0;
+				else if(desire > 100)
+					desire = 100;
+			}
+			else {
 				this.dest = this.pos.plus(pos.minus(danger_source.get_position()).direction());
 				this.move(2*speed*dt*Math.exp((energy - 100.0)*0.007));
 				this.age += dt;
@@ -68,7 +85,7 @@ public class Sheep extends Animal{
 					desire = 100;
 			}
 			if(danger_source == null || pos.distanceTo(danger_source.get_position()) > this.sight_range) {
-				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);;
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.danger_source = this.danger_strategy.select(this, animals);
 				if(danger_source == null) {
@@ -83,7 +100,7 @@ public class Sheep extends Animal{
 			if(mate_target != null && mate_target.get_state() == State.DEAD)
 				mate_target = null;
 			if(mate_target == null) {
-				Predicate<Animal> filter = animal -> animal instanceof Sheep;
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.HERBIVORE);;
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.mate_target = this.mate_strategy.select(this, animals);
 			}
@@ -127,7 +144,7 @@ public class Sheep extends Animal{
 					desire = 100;
 			}
 			if(danger_source == null) {
-				Predicate<Animal> filter = animal -> animal instanceof Wolf;
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.danger_source = this.danger_strategy.select(this, animals);
 			}

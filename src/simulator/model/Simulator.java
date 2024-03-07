@@ -18,6 +18,7 @@ public class Simulator implements JSONable{
 		this.region_mngr = new RegionManager(cols, rows, width, height);
 		this.animals = new ArrayList<>();
 		this.time = 0.0;
+		
 	}
 	private void set_region(int row, int col, Region r) {
 		this.region_mngr.set_region(row, col, r);

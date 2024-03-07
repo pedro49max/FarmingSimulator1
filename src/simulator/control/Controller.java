@@ -2,9 +2,17 @@ package simulator.control;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
+import java.util.ArrayList;
+
+import simulator.model.Animalnfo;
+import simulator.model.MapInfo;
 import simulator.model.Simulator;
+import simulator.view.SimpleObjectViewer;
+import simulator.view.SimpleObjectViewer.ObjInfo;
 
 public class Controller {
 	private Simulator sim;
@@ -45,11 +53,19 @@ public class Controller {
 	}
 	public void run(double t, double dt, boolean sv, OutputStream out) {
 		// Store the initial state
+		SimpleObjectViewer view = null;
+		if (sv) {
+			MapInfo m = sim.get_map_info();
+			view = new SimpleObjectViewer("[ECOSYSTEM]",m.get_width(), m.get_height(),m.get_cols(), m.get_rows());
+			view.update(to_animals_info(sim.get_animals()), sim.get_time(), dt);
+		}
+	    //
 	    JSONObject init_state = this.sim.as_JSON();
 
 	    // Run the simulation until the specified time 't'
 	    while (this.sim.get_time() < t) {
 	        this.sim.advance(dt);
+	        if (sv) view.update(to_animals_info(this.sim.get_animals()), this.sim.get_time(), dt);
 	    }
 
 	    // Store the final state
@@ -71,11 +87,21 @@ public class Controller {
 	        if (sv) {
 	            try {
 	                out.close();
+	                view.close();
 	            } catch (IOException e) {
 	                System.err.println("Error closing the output stream: " + e.getMessage());
 	                e.printStackTrace();
 	            }
 	        }
 	    }
+	    if (sv) view.close();
 	}
+	private List<ObjInfo> to_animals_info(List<? extends Animalnfo> animals) {
+		List<ObjInfo> ol = new ArrayList<>(animals.size());
+		for (Animalnfo a : animals)
+		ol.add(new ObjInfo(a.get_genetic_code(),
+		(int) a.get_position().getX(),
+		(int) a.get_position().getY(),(int)Math.round(a.get_age())+2));
+		return ol;
+		}
 }

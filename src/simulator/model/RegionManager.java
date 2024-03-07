@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 
@@ -47,16 +49,20 @@ public class RegionManager implements AnimalMapView{
 	}
 	void register_animal(Animal a) {
 		Vector2D pos= a.get_position();
-		int newCol = (int) (pos.getX() / this.regWidth);
-		int newRow = (int) (pos.getY() / this.regHeight);
+		int newCol =  Math.max(0, Math.min(colums -1, (int) (pos.getX() / this.regWidth)));
+		int newRow = Math.max(0, Math.min(rows -1, (int) (pos.getY() / this.regHeight)));
+		if(newCol >= this.colums)
+			newCol = this.colums - 1;
+		if(newRow >= this.rows)
+			newRow = this.rows - 1;
 		regions[newRow][newCol].add_animal(a);
 		this.animal_region.put(a, regions[newRow][newCol]);
 		a.init(this);
 	}
 	void unregister_animal(Animal a) {
 		Vector2D pos= a.get_position();
-		int newCol = (int) (pos.getX() / this.regWidth);
-		int newRow = (int) (pos.getY() / this.regHeight);
+		int newCol =  Math.max(0, Math.min(colums -1, (int) (pos.getX() / this.regWidth)));
+		int newRow = Math.max(0, Math.min(rows -1, (int) (pos.getY() / this.regHeight)));
 		regions[newRow][newCol].remove_animal(a);
 		this.animal_region.remove(a, regions[newRow][newCol]);
 	}
@@ -92,8 +98,8 @@ public class RegionManager implements AnimalMapView{
 			this.register_animal(a);
 		else {
 			Vector2D pos= a.get_position();
-			int newCol = (int) (pos.getX() / this.regWidth);
-			int newRow = (int) (pos.getY() / this.regHeight);
+			int newCol =  Math.max(0, Math.min(colums -1, (int) (pos.getX() / this.regWidth)));
+			int newRow = Math.max(0, Math.min(rows -1, (int) (pos.getY() / this.regHeight)));
 			if(nCol != newCol || nRow != newRow) {
 				this.unregister_animal(a, regions[newRow][newCol]);
 				this.register_animal(a);
@@ -104,8 +110,8 @@ public class RegionManager implements AnimalMapView{
 	public double get_food(Animal a, double dt) {
 		double food;
 		Vector2D pos= a.get_position();
-		int newCol = (int) (pos.getX() / this.regWidth);
-		int newRow = (int) (pos.getY() / this.regHeight);
+		int newCol =  Math.max(0, Math.min(colums -1, (int) (pos.getX() / this.regWidth)));
+		int newRow = Math.max(0, Math.min(rows -1, (int) (pos.getY() / this.regHeight)));
 		food = regions[newRow][newCol].get_food(a, dt);
 		return food;
 	}
@@ -131,12 +137,16 @@ public class RegionManager implements AnimalMapView{
 			up = 0;
 		for(int r = up; r <= down;r++)
 			for(int c = left; c <= right; c++) {
-				List<Animal> regAnimals = regions[r][c].getAnimals();
-				for(int i = 0; i < regAnimals.size();i++) {
-					Animal regAnimal = regAnimals.get(i);
-					if(a.pos.distanceTo(regAnimal.pos) <= a.get_sight_range() && filter.test(a))
-						animals.add(regAnimal);
-				}
+				Region reg = this.regions[r][c];
+				animals.addAll(reg.getAnimals().stream().filter(filter).collect(Collectors.toList()));
+				//List<Animal> regAnimals = regions[r][c].getAnimals();
+	            //System.out.println(regAnimals.size());
+				//for(int i = 0; i < regAnimals.size();i++) {
+					//Animal regAnimal = regAnimals.get(i);
+					//if(a.pos.distanceTo(regAnimal.pos) <= a.get_sight_range() ) {
+						//animals.add(regAnimal);
+					//}
+				//}
 			}
 		return animals;
 	}
