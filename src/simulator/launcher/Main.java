@@ -20,11 +20,14 @@ import org.json.JSONTokener;
 
 import simulator.model.Animal;
 import simulator.model.Region;
+import simulator.model.SelectionStrategy;
 import simulator.model.Simulator;
 import simulator.misc.Utils;
 import simulator.control.Controller;
 import simulator.factories.Factory;
 import simulator.factories.Builder;
+import simulator.factories.SheepBuilder;
+import simulator.factories.*;
 import simulator.factories.BuilderBasedFactory;
 
 //papure
@@ -64,6 +67,7 @@ public class Main {
 	private static ExecMode _mode = ExecMode.BATCH;
 	private static Factory<Animal> animals_factory;
 	private static Factory<Region> regions_factory;
+	private static Factory<SelectionStrategy> strategyFactory;
 
 	private static void parse_args(String[] args) {
 
@@ -185,14 +189,26 @@ public class Main {
 	}
 
 	private static void init_factories() {
+		// Initialize the selectionStrategy factory
+	    List<Builder<SelectionStrategy>> strategyBuilders = new ArrayList<>();
+	    // Add your strategy builders here...
+	    strategyBuilders.add(new SelectClosestBuilder());
+	    strategyBuilders.add(new SelectFirstBuilder());
+	    strategyBuilders.add(new SelectYoungestBuilder());
+	    strategyFactory = new BuilderBasedFactory<>(strategyBuilders);
+		
 		// Initialize the animal factory
 	    List<Builder<Animal>> animalBuilders = new ArrayList<>();
 	    // Add your animal builders here...
+	    animalBuilders.add(new SheepBuilder(strategyFactory));
+	    animalBuilders.add(new WolfBuilder(strategyFactory));
 	    animals_factory = new BuilderBasedFactory<>(animalBuilders);
 
 	    // Initialize the region factory
 	    List<Builder<Region>> regionBuilders = new ArrayList<>();
 	    // Add your region builders here...
+	    regionBuilders.add(new DefaultRegionBuilder());
+	    regionBuilders.add(new DynamicSupplyRegionBuilder());
 	    regions_factory = new BuilderBasedFactory<>(regionBuilders);
 	}
 

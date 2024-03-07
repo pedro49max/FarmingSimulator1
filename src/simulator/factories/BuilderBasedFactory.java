@@ -31,6 +31,7 @@ public class BuilderBasedFactory<T> implements Factory<T> {
 
         String typeTag = info.getString("type");
         Builder<T> builder = _builders.get(typeTag);
+        //System.out.println(builder.get_type_tag());
 
         if (builder != null) {
             JSONObject data = info.optJSONObject("data");

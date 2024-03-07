@@ -23,7 +23,7 @@ public abstract class Region implements Entity, FoodSupplier, RegionInfo{
 			else
 				i++;
 		}
-		animals.remove(0);
+		animals.remove(a);
 	}
 	final List<Animal> getAnimals(){
 		final List<Animal> animalss;

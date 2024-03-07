@@ -60,6 +60,10 @@ public class RegionManager implements AnimalMapView{
 		regions[newRow][newCol].remove_animal(a);
 		this.animal_region.remove(a, regions[newRow][newCol]);
 	}
+	void unregister_animal(Animal a, Region r) {
+		r.remove_animal(a);
+		this.animal_region.remove(a, r);
+	}
 	void update_animal_region(Animal a) {
 		int nCol = 0;
 		int nRow = 0;
@@ -91,7 +95,7 @@ public class RegionManager implements AnimalMapView{
 			int newCol = (int) (pos.getX() / this.regWidth);
 			int newRow = (int) (pos.getY() / this.regHeight);
 			if(nCol != newCol || nRow != newRow) {
-				this.unregister_animal(a);
+				this.unregister_animal(a, regions[newRow][newCol]);
 				this.register_animal(a);
 			}
 			
@@ -129,7 +133,7 @@ public class RegionManager implements AnimalMapView{
 			for(int c = left; c <= right; c++) {
 				List<Animal> regAnimals = regions[r][c].getAnimals();
 				for(int i = 0; i < regAnimals.size();i++) {
-					Animal regAnimal = animals.get(i);
+					Animal regAnimal = regAnimals.get(i);
 					if(a.pos.distanceTo(regAnimal.pos) <= a.get_sight_range() && filter.test(a))
 						animals.add(regAnimal);
 				}
