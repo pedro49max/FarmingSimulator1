@@ -45,7 +45,7 @@ public class Wolf extends Animal{
 		}
 		else if(this.state == State.HUNGER) {
 			if(hunt_target == null ||(hunt_target != null && (hunt_target.get_state() == State.DEAD || this.pos.distanceTo(hunt_target.get_position()) > this.sight_range))) {
-				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.HERBIVORE);
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.HERBIVORE) && (!(animal.get_state() == State.DEAD));
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.hunt_target = this.hunting_strategy.select(this, animals);
 			}
@@ -80,6 +80,8 @@ public class Wolf extends Animal{
 				else if(desire > 100)
 					desire = 100;
 				if(this.pos.distanceTo(hunt_target.get_position()) < 8) {
+					if(this.hunt_target.state == State.DEAD)
+						System.out.println("lobo come oveja muerta");
 					this.hunt_target.state = State.DEAD;
 					this.hunt_target = null;
 					this.energy += 50;
@@ -100,7 +102,7 @@ public class Wolf extends Animal{
 			if(mate_target != null && mate_target.get_state() == State.DEAD)
 				mate_target = null;
 			if(mate_target == null) {
-				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE) && (!(animal.get_state() == State.DEAD));
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.mate_target = this.mate_strategy.select(this, animals);
 			}

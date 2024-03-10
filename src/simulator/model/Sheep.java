@@ -39,7 +39,7 @@ public class Sheep extends Animal{
 			else if(desire > 100)
 				desire = 100;
 			if(danger_source == null) {			
-				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);;
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE) && (!(animal.get_state() == State.DEAD));
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.danger_source = this.danger_strategy.select(this, animals);
 			}
@@ -84,8 +84,9 @@ public class Sheep extends Animal{
 				else if(desire > 100)
 					desire = 100;
 			}
+			//Changing STATE
 			if(danger_source == null || pos.distanceTo(danger_source.get_position()) > this.sight_range) {
-				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);;
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE) && (!(animal.get_state() == State.DEAD));
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.danger_source = this.danger_strategy.select(this, animals);
 				if(danger_source == null) {
@@ -97,10 +98,10 @@ public class Sheep extends Animal{
 			}
 		}
 		else if(this.state == State.MATE) {
-			if(mate_target != null && mate_target.get_state() == State.DEAD)
+			if(mate_target != null && (mate_target.get_state() == State.DEAD || this.pos.dot(mate_target.pos) > this.sight_range))
 				mate_target = null;
 			if(mate_target == null) {
-				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.HERBIVORE);;
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.HERBIVORE) && (!(animal.get_state() == State.DEAD));
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.mate_target = this.mate_strategy.select(this, animals);
 			}
@@ -143,8 +144,9 @@ public class Sheep extends Animal{
 				else if(desire > 100)
 					desire = 100;
 			}
+			//Change of STATE
 			if(danger_source == null) {
-				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE);
+				Predicate<Animal> filter = animal -> animal.get_diet().equals(Diet.CARNIVORE) && (!(animal.get_state() == State.DEAD));
 				List<Animal> animals = this.region_mngr.get_animals_in_range(this, filter);
 				this.danger_source = this.danger_strategy.select(this, animals);
 			}
@@ -161,8 +163,9 @@ public class Sheep extends Animal{
 			this.pos = new Vector2D(this.pos.getX(), region_mngr.get_height() - 1);
 			this.state = State.NORMAL;
 		}
-		if(this.energy == 0.0 || this.age > 8.0)
+		if(this.energy == 0.0 || this.age > 8.0) {
 			this.state = State.DEAD;
+		}
 		if(this.state != State.DEAD) {
 			this.energy += region_mngr.get_food(this, dt);
 			if(energy < 0)

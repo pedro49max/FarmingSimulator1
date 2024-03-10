@@ -44,7 +44,7 @@ public class SheepBuilder extends Builder<Animal> {
         } else {
             // Create the strategy using the factory
             String strategyType = strategyJson.getString("type");
-            JSONObject strategyData = strategyJson.getJSONObject("data");
+            JSONObject strategyData = strategyJson.optJSONObject("data");
             return strategyFactory.create_instance(new JSONObject().put("type", strategyType).put("data", strategyData));
         }
     }

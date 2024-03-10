@@ -236,14 +236,14 @@ public class Main {
 	        Simulator simulator = new Simulator(cols, rows, width, height, animals_factory, regions_factory);
 
 	        // Create animals based on the specifications provided in the input file
-	        for (int i = 0; i < animalsArray.length() -2 ; i++) {
+	        for (int i = 0; i < animalsArray.length()-i - 2; i++) {
 	            JSONObject animalSpec = animalsArray.getJSONObject(i);
 	            int amount = animalSpec.getInt("amount");
 	            JSONObject animalData = animalSpec.getJSONObject("spec");
 	            String animalType = animalData.getString("type");
 
 	            // Create animals based on the type and amount specified
-	            for (int j = 0; j < amount; j++) {
+	            for (int j = 0; j < (amount); j++) {//Hay que arreglar que se crean demasiados bichos
 	                switch (animalType) {
 	                    case "sheep":
 	                        simulator.add_animal(animalData);
