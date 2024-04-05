@@ -39,7 +39,8 @@ public abstract class Animal implements Entity, Animalnfo{
 		if(this.diet == Diet.CARNIVORE)
 			this.age = Utils._rand.nextDouble(13);//Random number when initialize the program
 		else
-			this.age = Utils._rand.nextDouble(7);//Random number when initialize the program
+			this.age = Utils._rand.nextDouble(7);//Random number when initialize the 
+		//this.age = 0;
 	}
 	
 	protected Animal(Animal p1, Animal p2) {
